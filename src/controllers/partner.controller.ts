@@ -33,5 +33,22 @@ export default class PartnerController {
             next(new HttpException(400, error?.message));
         }
     }
+
+    public getPartnerByLocation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const { latitude, longitude } = req.query;
+        try {
+            if (!latitude || !longitude) {
+                next(new HttpException(400, 'Latitude and longitude are required'));
+            }
+            const result = await this.partnerService.getPartnerByLocation(parseFloat(latitude as string), parseFloat(longitude as string));
+            if (!result.error) {
+                res.status(200).json(result.data);
+            } else {
+                next(new HttpException(400, result.message + ''));
+            }
+        } catch (error: Error | any) {
+            next(new HttpException(400, error?.message));
+        }
+    }
     
 }

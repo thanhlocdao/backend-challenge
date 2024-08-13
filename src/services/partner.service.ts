@@ -43,6 +43,43 @@ class PartnerServive {
             return { error: true, message: error.message };
         }
     }
+
+    async getPartnerByLocation(latitude: number, longitude: number): Promise<{error: boolean, message?: String, data?: any}> {
+        try {
+            const partner = await mongodb.Partner.findOne({
+                coverageArea: {
+                    $geoIntersects: {
+                        $geometry: {
+                            type: "Point",
+                            coordinates: [longitude, latitude]
+                        }
+                    }
+                },
+                address: {
+                    $near: {
+                        $geometry: {
+                            type: "Point",
+                            coordinates: [longitude, latitude]
+                        }
+                    }
+                }
+            });
+            if (!partner) {
+                return {error: true, message: "Partner not found"};
+            }
+            // const result: ResponsePartnerDto = {
+            //     _id: partner._id.toString(),
+            //     tradingName: partner.tradingName,
+            //     ownerName: partner.ownerName,
+            //     document: partner.document,
+            //     coverageArea: partner.coverageArea as any,
+            //     address: partner.address as any
+            // }
+            return { error: false, data: partner };
+        } catch (error: Error | any) {
+            return { error: true, message: error.message };
+        }
+    }
 }
 
 export default PartnerServive;

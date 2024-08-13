@@ -14,6 +14,7 @@ export class PartnerRoute implements Route {
     }
 
     private initializeRoutes() {
+        this.router.get(`${this.path}/location`, this.partnerController.getPartnerByLocation);
         this.router.post(`${this.path}`, validationMiddleware(CreatePartnerDto, false), this.partnerController.createPartner);
         this.router.get(`${this.path}/:id`, this.partnerController.getPartnerById);
     }
